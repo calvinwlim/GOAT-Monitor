@@ -1,23 +1,25 @@
-import requests
-from bs4 import BeautifulSoup
-from lxml import html
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import Select
 import pyfiglet
 
-banner = pyfiglet.figlet_format('GOAT')
+banner = pyfiglet.figlet_format('Sole Supremacy')
 print(banner)
-response = requests.get('https://www.goat.com/sneakers/air-jordan-1-retro-high-og-neutral-grey-dc1788-029/available-sizes')
-print("status code: ", response.status_code)
-print("\n")
-print(response.headers)
-print("\n")
-print(response.cookies)
-print("\n")
-soup = BeautifulSoup(response.content, 'html.parser')
-soup.find_all('div', class_='ProductVariantSize__Wrapper-ci5six-0 dCiSfE')
-soup.find_all('div', class_='ProductVariantButtonPrice-fapubr-2 fHJrlz')
-#tree = html.fromstring(response.content)
-#sizes = tree.xpath('//*[@id="root"]/div[1]/div[4]/div[1]/div[2]/div/div[2]/div/a[1]/div[2]')
-#prices = tree.xpath('//*[@id="root"]/div[1]/div[4]/div[1]/div[2]/div/div[2]/div/a[1]/div[3]')
-#print('Sizes: ', sizes)
-#print("\n")
-#print('Prices: ', prices)
+
+options = Options()
+options.headless = True
+options.add_argument("--window-size=1920,1200")
+
+driver = webdriver.Chrome(options=options, executable_path='./chromedriver')
+driver.get("https://www.solesupremacy.com/products/air-jordan-1-retro-gs-court-purple-white")
+print(driver.current_url)
+print(driver.title)
+print('\n')
+price = int(driver.find_element_by_id('productPrice').text)/100
+select = driver.find_element_by_id('productSelect-option-0')
+all_options = select.find_elements_by_tag_name("option")
+print('${pr}'.format(pr=price))
+print('\n')
+for option in all_options:
+    print(option.get_attribute("value"))
